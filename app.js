@@ -97,6 +97,7 @@
     sincronizarStore();
   }
 
+  //Agregar al LocalStore
   function sincronizarStore() {
     localStorage.setItem("carrito", JSON.stringify(carrito));
     mostrarHtml();
