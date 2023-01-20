@@ -13,7 +13,7 @@ function iniciarApp() {
     formulario.addEventListener('submit', obtenerImagenes)
 
     //Funciones
-    function obtenerImagenes(e) {
+    async function obtenerImagenes(e) {
         e.preventDefault();
         const inputTermino = document.querySelector('#termino').value;
 
@@ -22,21 +22,20 @@ function iniciarApp() {
             return;
         }   //Fin del if
 
+        const key = '32953648-97943c7707fe699be13cc4048'
+        const url = `https://pixabay.com/api/?key=${key}&q=${inputTermino}&image_type=photo&pretty=true&per_page=${registrosPorPagina}&page=${paginaActual}`;
+        
+        spinner();
+
         try {
-            const key = '32953648-97943c7707fe699be13cc4048'
-            const url = `https://pixabay.com/api/?key=${key}&q=${inputTermino}&image_type=photo&pretty=true&per_page=${registrosPorPagina}&page=${paginaActual}`;
-            console.log(url);
+            const respuesta = await fetch(url);
+            const resultado = await respuesta.json()
+    
+            limpiarHtml(resultado);
 
-            spinner();
-
-            fetch(url)
-                .then( respuesta => respuesta.json() )
-                .then( resultado => {
-                    limpiarHtml(resultado);
-
-                    totalPaginas = cantidadPaginas(resultado.totalHits);
-                    mostrarImagenes(resultado.hits)
-                } );
+            totalPaginas = cantidadPaginas(resultado.totalHits);
+            
+            mostrarImagenes(resultado.hits)
         } catch (error) {
             console.error(error);
         }
