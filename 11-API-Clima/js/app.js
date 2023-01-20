@@ -22,12 +22,12 @@
   }
 
   async function consultarAPI(ciudad, pais) {
+    const key = "32645c0cf3355ad76d9179394dcdf2cc";
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${ciudad},${pais}&appid=${key}`;
+
+    spinner();
+
     try {
-      const key = "32645c0cf3355ad76d9179394dcdf2cc";
-      const url = `https://api.openweathermap.org/data/2.5/weather?q=${ciudad},${pais}&appid=${key}`;
-
-      spinner();
-
       const respuesta = await fetch(url);
       const resultado = await respuesta.json();
       

@@ -43,12 +43,16 @@ function mostrarSecciones() {
   seccionesOcultas.forEach((seccion) => seccion.classList.remove("d-none"));
 }
 
-function obtenerPlatillos() {
+async function obtenerPlatillos() {
   const url = `http://localhost:4000/platillos`;
-  fetch(url)
-    .then((respuesta) => respuesta.json() )
-    .then( resultado => mostrarPlatillos(resultado) )
-    .catch((error) => console.error(error) );
+  try {
+    const respuesta = await fetch(url);
+    const resultado = await respuesta.json();
+
+    mostrarPlatillos(resultado)
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 function mostrarPlatillos( platillos ) {
@@ -133,7 +137,6 @@ function agregarPlatillo( producto ) {
     const resultado = pedido.filter( articulo => articulo.id !== producto.id );
     cliente.pedido = [...resultado];
 }
-
 
 function eliminarProducto( id ) {
     //Eliminar producto

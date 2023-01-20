@@ -22,13 +22,17 @@ const obtenerCriptomoneda = criptomonedas => new Promise( resolve => {
     resolve( criptomonedas );
 });
 
-function consultarCriptomoneda() {
+async function consultarCriptomoneda() {
     const url = `https://min-api.cryptocompare.com/data/top/mktcapfull?limit=10&tsym=USD`;
 
-    fetch(url)
-        .then( respuesta => respuesta.json() )
-        .then( resultado => obtenerCriptomoneda(resultado.Data) )
-        .then( criptomonedas => selectCriptomoneda(criptomonedas ) );
+    try {
+        const respuesta = await fetch(url);
+        const resultado = await respuesta.json();
+        const criptomonedas = await obtenerCriptomoneda(resultado.Data);
+        selectCriptomoneda(criptomonedas );
+    } catch (error) {
+        console.error(error)
+    }
 }
 
 function selectCriptomoneda( criptomonedas ) {
@@ -58,16 +62,17 @@ function leerDatos(e) {
     objBusqueda[e.target.name] = e.target.value;
 }
 
-function consultarAPI() {
-    try {
-        const {moneda, criptomoneda} = objBusqueda;
-        const url = `https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${criptomoneda}&tsyms=${moneda}`;
-        
-        spinner();
+async function consultarAPI() {
+    const {moneda, criptomoneda} = objBusqueda;
+    const url = `https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${criptomoneda}&tsyms=${moneda}`;
+    
+    spinner();
 
-        fetch(url)
-            .then( respuesta => respuesta.json() )
-            .then( resultado => mostrarResultado( resultado.DISPLAY[criptomoneda][moneda] ));
+    try {
+        const respuesta = await fetch(url);
+        const resultado = await respuesta.json();
+        
+        mostrarResultado( resultado.DISPLAY[criptomoneda][moneda] );
     } catch (error) {
         console.error(error);
     }
