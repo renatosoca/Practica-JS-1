@@ -15,12 +15,13 @@ function iniciarApp() {
     obtenerFavoritos();
   }
 
-  function obtenerCategoria() {
+  async function obtenerCategoria() {
     try {
       const url = "https://www.themealdb.com/api/json/v1/1/categories.php";
-      fetch(url)
-        .then((respuesta) => respuesta.json())
-        .then((datos) => mostrarCategorias(datos));
+      const respuesta = await fetch(url);
+      const resultado = await respuesta.json();
+
+      mostrarCategorias(resultado);
     } catch (error) {
       console.error(error);
     }
@@ -40,13 +41,14 @@ function iniciarApp() {
     });
   }
 
-  function seleccionarCategoria(e) {
+  async function seleccionarCategoria(e) {
     try {
       const categorie = e.target.value;
       const url = `https://www.themealdb.com/api/json/v1/1/filter.php?c=${categorie}`;
-      fetch(url)
-        .then((respuesta) => respuesta.json())
-        .then((resultado) => mostrarProductos(resultado.meals));
+      const respuesta = await fetch(url);
+      const resultado = await respuesta.json();
+      
+      mostrarProductos(resultado.meals);
     } catch (error) {
       console.error(error);
     }
@@ -100,12 +102,13 @@ function iniciarApp() {
     });
   }
 
-  function mostrarReceta(id) {
+  async function mostrarReceta(id) {
     try {
       const url = `https://themealdb.com/api/json/v1/1/lookup.php?i=${id}`;
-      fetch(url)
-        .then((resultado) => resultado.json())
-        .then((respuesta) => mostrarDatosModal(respuesta));
+      const respuesta = await fetch(url);
+      const resultado = await respuesta.json();
+
+      mostrarDatosModal(resultado);
     } catch (error) {
       console.error(error);
     }
