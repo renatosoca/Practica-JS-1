@@ -80,10 +80,18 @@ function mostrarPlatillos( platillos ) {
         //Evento para el INPUT
         inputCantidad.onchange = function() {
             const cantidad = parseInt( inputCantidad.value );
-
             //convertir los valores en un solo objeto
             agregarPlatillo( {cantidad, ...platillo} );
-            actualizarResumen();
+
+            limpiarHtml(contenidoResumen)
+
+            if (cliente.pedido.length) {
+                actualizarResumen();
+
+                formularioPropinas()
+                return;
+            }
+            mensajePedidoVacio();
         }
 
         const agregar = document.createElement('div');
@@ -126,11 +134,49 @@ function agregarPlatillo( producto ) {
     cliente.pedido = [...resultado];
 }
 
+
+function eliminarProducto( id ) {
+    //Eliminar producto
+    let { pedido } = cliente;
+    const resultado = pedido.filter( articulo => articulo.id !== id );
+    cliente.pedido = [...resultado];
+}
+
+function mensajePedidoVacio() {
+    const texto = document.createElement('p');
+    texto.classList.add('text-center');
+    texto.textContent = 'Añade los elementos del pedido';
+
+    contenidoResumen.appendChild(texto);
+}
+
+function limpiarHtml( reference ) {
+    while (reference.firstChild) {
+        reference.removeChild( reference.firstChild )
+    }
+}
+
+function mostrarAlerta(mensaje) {
+  const alertaOld = document.querySelector(".invalid-feedback");
+
+  if (!alertaOld) {
+    const alerta = document.createElement("div");
+    alerta.classList.add("invalid-feedback", "d-block", "text-center");
+    alerta.textContent = mensaje;
+
+    document.querySelector(".modal-body form").appendChild(alerta);
+
+    setTimeout(() => {
+      alerta.remove();
+    }, 2000);
+  }
+}
+
+//1ra mitad
 function actualizarResumen() {
-    limpiarHtml(contenidoResumen);
 
     const resumen = document.createElement('div');
-    resumen.classList.add('col-md-6', 'card', 'py-5','px-3', 'shadow');
+    resumen.classList.add('col-md-6', 'card', 'py-2','px-3', 'shadow');
 
     const mesa = document.createElement('p');
     mesa.classList.add('fw-bold');
@@ -157,7 +203,7 @@ function actualizarResumen() {
     grupo.classList.add('list-group');
     
     cliente.pedido.forEach( articulo => {
-        const { id, nombre, precio, categoria, cantidad} = articulo;
+        const { id, nombre, precio, cantidad} = articulo;
 
         //Scripting
         const lista = document.createElement('li');
@@ -197,7 +243,18 @@ function actualizarResumen() {
         btnEliminar.onclick = function() {
             eliminarProducto( id );
 
-            actualizarResumen();
+            limpiarHtml(contenidoResumen);
+
+            if (cliente.pedido.length) {
+                actualizarResumen();
+
+                formularioPropinas();
+            } else {
+                mensajePedidoVacio();
+            }
+
+            const productoEliminado = document.querySelector(`#producto-${id}`);
+            productoEliminado.value = 0;
         }
 
         //
@@ -217,40 +274,141 @@ function actualizarResumen() {
     mesa.appendChild(mesaSpan);
     hora.appendChild(horaSpan);
 
+    //Agregando en el div de la 1ra parte
+    resumen.appendChild(titulo);
     resumen.appendChild(mesa);
     resumen.appendChild(hora);
-    resumen.appendChild(titulo);
-    
     resumen.appendChild(grupo);
 
     contenidoResumen.appendChild(resumen)
 }
 
-function eliminarProducto( id ) {
-    //Eliminar producto
-    let { pedido } = cliente;
-    const resultado = pedido.filter( articulo => articulo.id !== id );
-    cliente.pedido = [...resultado];
+//2da mitad
+function formularioPropinas() {
+    const formulario = document.createElement('div');
+    formulario.classList.add('col-md-6', 'formulario');
+
+    const divFormulario = document.createElement('div');
+    divFormulario.classList.add('card', 'shadow', 'py-2', 'px-3')
+
+    const heading = document.createElement('h3');
+    heading.classList.add('my-4', 'text-center');
+    heading.textContent = 'Propina';
+
+    //INPUTS RADIO 10%
+    const radio10Div = document.createElement('div');
+    radio10Div.classList.add('form-check');
+
+    const radio10Label = document.createElement('label');
+    radio10Label.textContent = '10 %';
+    radio10Label.classList.add('form-check-label');
+
+    const radio10 = document.createElement('input');
+    radio10.type = 'radio';
+    radio10.name = 'propina';
+    radio10.value = '10';
+    radio10.classList.add('form-check-input');
+    radio10.onclick = calcularPropina;
+
+    //25%
+    const radio25Div = document.createElement('div');
+    radio25Div.classList.add('form-check');
+
+    const radio25Label = document.createElement('label');
+    radio25Label.textContent = '25 %';
+    radio25Label.classList.add('form-check-label');
+
+    const radio25 = document.createElement('input');
+    radio25.type = 'radio';
+    radio25.name = 'propina';
+    radio25.value = '25';
+    radio25.classList.add('form-check-input');
+    radio25.onclick = calcularPropina;
+
+    //50 %
+    const radio50Div = document.createElement('div');
+    radio50Div.classList.add('form-check');
+
+    const radio50Label = document.createElement('label');
+    radio50Label.textContent = '50 %';
+    radio50Label.classList.add('form-check-label');
+
+    const radio50 = document.createElement('input');
+    radio50.type = 'radio';
+    radio50.name = 'propina';
+    radio50.value = '50';
+    radio50.classList.add('form-check-input');
+    radio50.onclick = calcularPropina;
+
+    //Agregando al DIV de los RADIOS
+    radio10Div.appendChild(radio10Label);
+    radio10Div.appendChild(radio10);
+    radio25Div.appendChild(radio25Label);
+    radio25Div.appendChild(radio25);
+    radio50Div.appendChild(radio50Label);
+    radio50Div.appendChild(radio50);
+    //Agregar al DIV principal
+    divFormulario.appendChild(heading);
+    divFormulario.appendChild(radio10Div);
+    divFormulario.appendChild(radio25Div);
+    divFormulario.appendChild(radio50Div);
+
+    formulario.appendChild(divFormulario);
+    contenidoResumen.appendChild(formulario);
 }
 
-function limpiarHtml( reference ) {
-    while (reference.firstChild) {
-        reference.removeChild( reference.firstChild )
-    }
+function calcularPropina(e) {
+    let subtotal = 0;
+    const {pedido} = cliente;
+
+    pedido.forEach( articulo => {
+        subtotal += articulo.cantidad*articulo.precio;
+    });
+
+    const propinaSeleccionada = parseInt( e.target.value );
+    
+    const propina = ( (subtotal * propinaSeleccionada) / 100 );
+
+    const total = subtotal + propina;
+    
+    mostrarTotalHtml( subtotal, propina, total )
 }
 
-function mostrarAlerta(mensaje) {
-  const alertaOld = document.querySelector(".invalid-feedback");
+function mostrarTotalHtml( subtotal, propina, total ) {
+    const divTotales = document.createElement('div');
+    divTotales.classList.add('total-pagar');
 
-  if (!alertaOld) {
-    const alerta = document.createElement("div");
-    alerta.classList.add("invalid-feedback", "d-block", "text-center");
-    alerta.textContent = mensaje;
+    const subtotalParrafo = document.createElement('p');
+    subtotalParrafo.classList.add( 'fw-bold', 'mt-2');
+    subtotalParrafo.textContent = 'Subtotal Consumo: ';
 
-    document.querySelector(".modal-body form").appendChild(alerta);
+    const subtotalSpan = document.createElement('span');
+    subtotalSpan.classList.add('fw-normal');
+    subtotalSpan.textContent = `S/${subtotal}`;
 
-    setTimeout(() => {
-      alerta.remove();
-    }, 2000);
-  }
+    const propinaParrafo = document.createElement('p');
+    propinaParrafo.classList.add('fw-bold', 'mt-2');
+    propinaParrafo.textContent = 'Propina: ';
+
+    const propinaSpan = document.createElement('span');
+    propinaSpan.classList.add('fw-normal');
+    propinaSpan.textContent = `S/${propina}`;
+
+    const totalParrafo = document.createElement('p');
+    totalParrafo.classList.add( 'fw-bold', 'mt-2');
+    totalParrafo.textContent = 'total: ';
+
+    const totalSpan = document.createElement('span');
+    totalSpan.classList.add('fw-normal');
+    totalSpan.textContent = `S/${total}`;
+
+    subtotalParrafo.appendChild(subtotalSpan);
+    propinaParrafo.appendChild(propinaSpan);
+    totalParrafo.appendChild(totalSpan);
+
+    divTotales.appendChild(subtotalParrafo);
+    divTotales.appendChild(propinaParrafo);
+    divTotales.appendChild(totalParrafo);
+
+    document.querySelector('.formulario > div').appendChild(divTotales);
 }
