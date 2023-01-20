@@ -406,6 +406,10 @@ function mostrarTotalHtml( subtotal, propina, total ) {
     propinaParrafo.appendChild(propinaSpan);
     totalParrafo.appendChild(totalSpan);
 
+    //Eliminar registros previos
+    const totalPagarDiv = document.querySelector('.total-pagar');
+    if (totalPagarDiv) totalPagarDiv.remove();
+
     divTotales.appendChild(subtotalParrafo);
     divTotales.appendChild(propinaParrafo);
     divTotales.appendChild(totalParrafo);
