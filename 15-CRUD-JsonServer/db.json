@@ -1,0 +1,25 @@
+{
+  "clientes": [
+    {
+      "nombre": "Dio actualizado",
+      "email": "u18215194@gmail.com",
+      "telefono": "977109379",
+      "empresa": "213",
+      "id": 1
+    },
+    {
+      "nombre": "renato actualizado",
+      "email": "u1213241@gmail.com",
+      "telefono": "977109379",
+      "empresa": "1212",
+      "id": 2
+    },
+    {
+      "nombre": "Soca",
+      "email": "soca@gmail.com",
+      "telefono": "21331432",
+      "empresa": "1eqe",
+      "id": 3
+    }
+  ]
+}
